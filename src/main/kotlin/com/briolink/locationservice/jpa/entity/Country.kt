@@ -24,7 +24,7 @@ class Country {
     lateinit var name: String
 
     @Column(name = "type", length = 191, nullable = false)
-    var type: String = "country"
+    var type: String = "Country"
 
     @Column(name = "iso3", length = 10)
     @CsvBindByName

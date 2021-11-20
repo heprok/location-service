@@ -26,7 +26,7 @@ class City {
     lateinit var name: String
 
     @Column(name = "type", nullable = false)
-    var type: String = "city"
+    var type: String = "City"
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "state_id", nullable = false)

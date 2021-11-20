@@ -4,8 +4,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version Versions.SPRING_BOOT
     id("io.spring.dependency-management") version Versions.SPRING_DEPENDENCY_MANAGEMENT
-    id("com.diffplug.spotless") version Versions.SPOTLESS
     kotlin("jvm") version Versions.KOTLIN
+    kotlin("kapt") version Versions.KOTLIN
     kotlin("plugin.spring") version Versions.KOTLIN
 }
 
@@ -22,8 +22,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${Versions.SPRING_BOOT}")
+    kapt("org.springframework.boot:spring-boot-configuration-processor:${Versions.SPRING_BOOT}")
 
     // FasterXML
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -34,6 +37,7 @@ dependencies {
 
     //CSV
     implementation("com.opencsv:opencsv:${Versions.OPEN_CSV}")
+
 
     // Liquibase
     implementation("org.liquibase:liquibase-core:${Versions.LIQUIBASE_CORE}")

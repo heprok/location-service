@@ -14,9 +14,6 @@ class InitRunner(
     override fun run(vararg args: String?) {
         if(locationService.md5Check())
             locationService.refresh()
-        else {
-            println(5555)
-        }
     }
 
 }

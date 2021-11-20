@@ -12,7 +12,7 @@ import javax.persistence.Table
 class Info {
     @Id
     @Column(name = "md5_city", nullable = false)
-    var md5City: UUID? = null
+    var id: UUID? = null
 
     @Column(name = "md5_country", nullable = false)
     lateinit var md5Country: UUID

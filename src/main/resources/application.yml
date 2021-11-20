@@ -1,12 +1,14 @@
 server:
-  port: ${PORT_SERVER:8080}
+  port: 8080
 spring:
+  profiles:
+    active: ${env.spring_profiles_active:local}
   servlet:
     multipart:
       max-file-size: 2MB
       max-request-size: 2MB
   datasource:
-    url: jdbc:postgresql://${env.DB_HOST:localhost}:${env.DB_PORT:5432}/location
+    url: jdbc:postgresql://${env.DB_HOST:localhost}:${env.DB_PORT:5432}/${env.spring_profiles_active}_location
     username: ${env.DB_USER:ok}
     password: ${env.DB_PASSWORD:ok}
     hikari:

@@ -23,7 +23,7 @@ databaseChangeLog:
               - column:
                   name: type
                   type: varchar(20)
-                  defaultValue: country
+                  defaultValue: Country
               - column:
                   name: iso2
                   type: varchar(3)
@@ -103,7 +103,7 @@ databaseChangeLog:
               - column:
                   name: type
                   type: varchar(191)
-                  defaultValue: state
+                  defaultValue: State
               - column:
                   name: subtype
                   type: varchar(191)
@@ -136,7 +136,7 @@ databaseChangeLog:
               - column:
                   name: type
                   type: varchar(20)
-                  defaultValue: city
+                  defaultValue: City
               - column:
                   name: state_id
                   type: serial

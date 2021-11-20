@@ -18,7 +18,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
         (
             SELECT
                 countries.id AS id,
-                    'country' as type,
+                    countries.type as type,
                     null as city_name,
                     null as state_name,
                     null as state_code,
@@ -33,7 +33,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
             
             SELECT
                 states.id AS id,
-                    'state' as type,
+                    states.type as type,
                     null as city_name,
                     states.name as state_name,
                     states.state_code as state_code,
@@ -49,7 +49,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
             
             SELECT
                 cities.id AS id,
-                    'city' as type,
+                    cities.type as type,
                     cities.name as city_name,
                     states.name as state_name,
                     states.state_code as state_code,
@@ -65,7 +65,11 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
     """,
             nativeQuery = true,
     )
-    fun refreshLocation()
+    fun insertLocation()
+
+    @Modifying
+    @Query("delete from Location")
+    fun deleteLocations()
 
     @Query(
             """
@@ -83,7 +87,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                     location, myconstants
                 WHERE
                     (textsearch_tsv @@ to_tsquery('english', query))
-                ORDER BY type = 'country' desc, type = 'state' desc, type = 'city' desc, rank desc
+                ORDER BY type = 'Country' desc, type = 'State' desc, type = 'City' desc, rank desc
                 LIMIT 5
             """,
             nativeQuery = true,
