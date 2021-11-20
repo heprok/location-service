@@ -1,0 +1,243 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: oleg@briolink.com
+      changes:
+        - createTable:
+            tableName: countries
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: iso3
+                  type: varchar(3)
+              - column:
+                  name: type
+                  type: varchar(20)
+                  defaultValue: country
+              - column:
+                  name: iso2
+                  type: varchar(3)
+              - column:
+                  name: numeric_code
+                  type: varchar(10)
+              - column:
+                  name: phone_code
+                  type: varchar(255)
+              - column:
+                  name: capital
+                  type: varchar(255)
+              - column:
+                  name: currency
+                  type: varchar(255)
+              - column:
+                  name: currency_symbol
+                  type: varchar(255)
+              - column:
+                  name: tld
+                  type: varchar(255)
+              - column:
+                  name: native
+                  type: varchar(255)
+              - column:
+                  name: region
+                  type: varchar(255)
+              - column:
+                  name: subregion
+                  type: varchar(255)
+              - column:
+                  name: timezones
+                  type: text
+              - column:
+                  name: latitude
+                  type: decimal
+              - column:
+                  name: longitude
+                  type: decimal
+              - column:
+                  name: emoji
+                  type: varchar(191)
+              - column:
+                  name: emoji_u
+                  type: varchar(191)
+        - createTable:
+            tableName: states
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: country_id
+                  type: serial
+                  constraints:
+                    foreignKeyName: country_region_final
+                    references: countries(id)
+                    nullable: false
+              - column:
+                  name: country_code
+                  type: varchar(2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: state_code
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(191)
+                  defaultValue: state
+              - column:
+                  name: subtype
+                  type: varchar(191)
+              - column:
+                  name: latitude
+                  type: decimal
+              - column:
+                  name: longitude
+                  type: decimal
+        - createIndex:
+            columns:
+              - column:
+                  name: country_id
+            indexName: country_region
+            tableName: states
+        - createTable:
+            tableName: cities
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(20)
+                  defaultValue: city
+              - column:
+                  name: state_id
+                  type: serial
+                  constraints:
+                    foreignKeyName: cities_ibfk_1
+                    references: states(id)
+                    nullable: false
+              - column:
+                  name: country_id
+                  type: serial
+                  constraints:
+                    foreignKeyName: cities_ibfk_2
+                    references: countries(id)
+                    nullable: false
+              - column:
+                  name: country_code
+                  type: char(2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: latitude
+                  type: decimal
+              - column:
+                  name: longitude
+                  type: decimal
+              - column:
+                  name: wiki_data_id
+                  type: varchar(255)
+                  remarks: Rapid API GeoDB Cities
+        - createIndex:
+            columns:
+              - column:
+                  name: state_id
+            indexName: cities_test_ibfk_1
+            tableName: cities
+        - createIndex:
+            columns:
+              - column:
+                  name: country_id
+            indexName: cities_test_ibfk_2
+            tableName: cities
+        - createTable:
+            tableName: location
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(100)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: country_name
+                  type: varchar(255)
+              - column:
+                  name: state_name
+                  type: varchar(255)
+              - column:
+                  name: city_name
+                  type: varchar(255)
+              - column:
+                  name: state_code
+                  type: varchar(10)
+              - column:
+                  name: country_code_iso2
+                  type: varchar(10)
+              - column:
+                  name: country_code_iso3
+                  type: varchar(10)
+              - column:
+                  name: textsearch_tsv
+                  type: tsvector
+        - sql:
+            sql: create index idx_gin_location on location using gin (textsearch_tsv)
+        - createTable:
+            tableName: info
+            columns:
+              - column:
+                  name: md5_city
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: md5_country
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: md5_state
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
