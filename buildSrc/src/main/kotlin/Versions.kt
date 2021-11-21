@@ -5,6 +5,7 @@ object Versions {
     const val JVM = "11"
     const val KOTLIN = "1.5.31"
     const val SPRING_BOOT = "2.5.5"
+    const val DOTENV = "2.3.0"
     const val SPRING_DEPENDENCY_MANAGEMENT = "1.0.11.RELEASE"
     const val SPOTLESS = "5.14.1"
     const val LIQUIBASE_CORE = "4.4.3"
