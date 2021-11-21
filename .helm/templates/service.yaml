@@ -10,3 +10,28 @@ spec:
       port: 80
       targetPort: 8080
       protocol: TCP
+  env:
+    - name: spring_profiles_active
+      value: { { .Values.werf.env | quote } }
+    - name: S3_BUCKET_NAME
+      value: briolink
+    - name: DB_HOST
+      valueFrom:
+        secretKeyRef:
+          name: { { .Values.werf.name } }
+          key: dbHost
+    - name: DB_PORT
+      valueFrom:
+        secretKeyRef:
+          name: { { .Values.werf.name } }
+          key: dbPort
+    - name: DB_USER
+      valueFrom:
+        secretKeyRef:
+          name: { { .Values.werf.name } }
+          key: dbUsername
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: { { .Values.werf.name } }
+          key: dbPassword
