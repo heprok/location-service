@@ -28,6 +28,14 @@ Build and Publish:
   tags:
     - briolink-devops
 
+Deploy to Demo:
+  <<: *base_deploy
+  environment:
+    name: demo
+    url: http://location-service.demo.svc.cluster.local
+  only:
+    - demo
+
 Deploy to Test:
   <<: *base_deploy
   environment:
