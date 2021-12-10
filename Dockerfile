@@ -1,11 +1,11 @@
-FROM arm64v8/gradle:jdk11-openj9 as builder
+FROM --platform=linux/arm64/v8 public.ecr.aws/docker/library/gradle:jdk11-hotspot as builder
 
 WORKDIR /app
 COPY . .
 
 RUN gradle bootJar --no-daemon
 
-FROM arm64v8/openjdk:11-jdk-slim
+FROM --platform=linux/arm64/v8 public.ecr.aws/docker/library/openjdk:11-jdk-slim
 
 COPY --from=builder /app/build/libs/*.jar /application.jar
 
