@@ -23,26 +23,5 @@ spec:
             - containerPort: 8080
               protocol: TCP
           env:
-            - name: spring_profiles_active
-              value: {{ .Values.werf.env | quote }}
-            - name: DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.werf.name }}
-                  key: dbHost
-            - name: DB_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.werf.name }}
-                  key: dbPort
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.werf.name }}
-                  key: dbUsername
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.werf.name }}
-                  key: dbPassword
+{{ include "app.envVars" . | indent 12 }}
       serviceAccountName: {{ .Values.werf.name }}
