@@ -2,10 +2,9 @@ package com.briolink.locationservice.jpa.entity
 
 import org.hibernate.Hibernate
 import java.io.Serializable
-import java.util.*
+import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Embeddable
-import javax.persistence.Entity
 
 @Embeddable
 open class LocationId : Serializable {
@@ -23,7 +22,7 @@ open class LocationId : Serializable {
         other as LocationId
 
         return id == other.id &&
-                type == other.type
+            type == other.type
     }
 
     companion object {

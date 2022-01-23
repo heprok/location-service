@@ -15,6 +15,7 @@ java.sourceCompatibility = Versions.JAVA
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -31,13 +32,16 @@ dependencies {
     // FasterXML
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    // SWAGGER
+    implementation("io.springfox:springfox-boot-starter:${Versions.SPRINGFOX}")
+
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    implementation("com.briolink:location:0.1.0-SNAPSHOT")
     //CSV
     implementation("com.opencsv:opencsv:${Versions.OPEN_CSV}")
-
 
     // Liquibase
     implementation("org.liquibase:liquibase-core:${Versions.LIQUIBASE_CORE}")

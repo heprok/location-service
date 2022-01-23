@@ -1,8 +1,8 @@
-package com.briolink.locationservice.jpa.repository;
+package com.briolink.locationservice.jpa.repository
 
-import com.briolink.locationservice.jpa.projection.LocationInfo
 import com.briolink.locationservice.jpa.entity.Location
 import com.briolink.locationservice.jpa.entity.LocationId
+import com.briolink.locationservice.jpa.projection.LocationInfo
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -10,10 +10,9 @@ import org.springframework.data.repository.query.Param
 
 interface LocationRepository : JpaRepository<Location, LocationId> {
 
-
     @Modifying
     @Query(
-            """
+        """
         INSERT INTO location (id, type, city_name, state_name, state_code, country_name, country_code_iso2, country_code_iso3, textsearch_tsv)
         (
             SELECT
@@ -63,7 +62,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
             LEFT JOIN countries ON countries.id = cities.country_id
             )
     """,
-            nativeQuery = true,
+        nativeQuery = true,
     )
     fun insertLocation()
 
@@ -72,10 +71,10 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
     fun deleteLocations()
 
     @Query(
-            """
+        """
                 WITH myconstants (query) as (
-   values (quote_literal(quote_literal(:query)) || ':*')
-)
+                   values (quote_literal(quote_literal(:query)) || ':*')
+                )
                 SELECT
                     id,
                     city_name as cityName,
@@ -86,11 +85,11 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                 FROM
                     location, myconstants
                 WHERE
-                    (textsearch_tsv @@ to_tsquery('english', query))
+                    :query is null or (textsearch_tsv @@ to_tsquery('english', query))
                 ORDER BY type = 'Country' desc, type = 'State' desc, type = 'City' desc, rank desc
                 LIMIT 5
             """,
-            nativeQuery = true,
+        nativeQuery = true,
     )
-    fun findByQuery(@Param("query") query: String): List<LocationInfo>
+    fun findByQueryAndType(@Param("query") query: String?): List<LocationInfo>
 }

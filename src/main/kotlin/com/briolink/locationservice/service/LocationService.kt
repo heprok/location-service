@@ -1,13 +1,14 @@
 package com.briolink.locationservice.service
 
+import com.briolink.location.enumeration.TypeLocationEnum
+import com.briolink.location.model.LocationId
+import com.briolink.location.model.LocationInfo
+import com.briolink.location.model.LocationSuggestion
 import com.briolink.locationservice.config.CsvFilesLocation
-import com.briolink.locationservice.dto.AutocompleteDto
-import com.briolink.locationservice.dto.LocationInfoDto
 import com.briolink.locationservice.jpa.entity.City
 import com.briolink.locationservice.jpa.entity.Country
 import com.briolink.locationservice.jpa.entity.Info
 import com.briolink.locationservice.jpa.entity.State
-import com.briolink.locationservice.jpa.enumartion.TypeLocationEnum
 import com.briolink.locationservice.jpa.repository.CityRepository
 import com.briolink.locationservice.jpa.repository.CountryRepository
 import com.briolink.locationservice.jpa.repository.InfoRepository
@@ -16,9 +17,8 @@ import com.briolink.locationservice.jpa.repository.StateRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.util.DigestUtils
 import java.io.BufferedInputStream
-import java.util.*
+import java.util.UUID
 
 @Service
 @Transactional
@@ -35,7 +35,8 @@ class LocationService(
     fun md5Check(): Boolean {
 //        val md5Country = BufferedInputStream(csvFilesLocation.country.openStream()).let { DigestUtils.md5Digest(it) }
 //        val md5State = BufferedInputStream(csvFilesLocation.state.openStream()).let { DigestUtils.md5Digest(it) }
-        val md5City = BufferedInputStream(csvFilesLocation.city.openStream()).let { UUID.nameUUIDFromBytes(it.readAllBytes()) }
+        val md5City =
+            BufferedInputStream(csvFilesLocation.city.openStream()).let { UUID.nameUUIDFromBytes(it.readAllBytes()) }
         return infoRepository.findByIdOrNull(md5City) == null
     }
 
@@ -84,49 +85,49 @@ class LocationService(
         locationRepository.insertLocation()
     }
 
-    fun getListForAutocomplete(query: String): List<AutocompleteDto> {
-        return locationRepository.findByQuery(query).let {
+    fun getListLocationSuggestion(query: String?): List<LocationSuggestion> =
+        locationRepository.findByQueryAndType(query).let {
+            println(query)
             val firstType = it.firstOrNull()?.type
             it.filter { location -> location.type == firstType }
         }.map {
-            val id: String = it.type + ";" + it.id.toString()
+            val locationId = LocationId(type = TypeLocationEnum.valueOf(it.type), id = it.id.toInt())
             val name =
-                    if (it.cityName != null) "${it.cityName}, ${it.stateName}, ${it.countryName}"
-                    else if (it.stateName != null) "${it.stateName}, ${it.countryName}"
-                    else it.countryName
-            AutocompleteDto(id = id, name = name)
+                if (it.cityName != null) "${it.cityName}, ${it.stateName}, ${it.countryName}"
+                else if (it.stateName != null) "${it.stateName}, ${it.countryName}"
+                else it.countryName
+            LocationSuggestion(locationId = locationId, name = name)
         }
-    }
 
-    fun getLocationInfo(id: Int, type: TypeLocationEnum): LocationInfoDto? {
+    fun getLocationInfo(id: Int, type: TypeLocationEnum): LocationInfo? {
         return when (type) {
             TypeLocationEnum.City -> {
                 cityRepository.findByIdOrNull(id)?.let {
-                    LocationInfoDto(
-                            city = it.toDto(),
-                            state = it.state.toDto(),
-                            country = it.country.toDto(),
-                            location = it.name + ", " + it.state.name + ", " + it.country.name,
+                    LocationInfo(
+                        city = it.toModel(),
+                        state = it.state.toModel(),
+                        country = it.country.toModel(),
+                        location = it.name + ", " + it.state.name + ", " + it.country.name,
                     )
                 }
             }
             TypeLocationEnum.State -> {
                 stateRepository.findByIdOrNull(id)?.let {
-                    LocationInfoDto(
-                            city = null,
-                            state = it.toDto(),
-                            country = it.country.toDto(),
-                            location = it.name + ", " + it.country.name,
+                    LocationInfo(
+                        city = null,
+                        state = it.toModel(),
+                        country = it.country.toModel(),
+                        location = it.name + ", " + it.country.name,
                     )
                 }
             }
             TypeLocationEnum.Country -> {
                 countryRepository.findByIdOrNull(id)?.let {
-                    LocationInfoDto(
-                            city = null,
-                            state = null,
-                            country = it.toDto(),
-                            location = it.name,
+                    LocationInfo(
+                        city = null,
+                        state = null,
+                        country = it.toModel(),
+                        location = it.name,
                     )
                 }
             }

@@ -12,8 +12,8 @@ class InitRunner(
 ) : CommandLineRunner {
     @Throws(Exception::class)
     override fun run(vararg args: String?) {
-        if(locationService.md5Check())
-            locationService.refresh()
+        if (locationService.md5Check())
+//            locationService.refresh()
+        println(1)
     }
-
 }
