@@ -1,12 +1,9 @@
 package com.briolink.locationservice.jpa.entity
 
-import com.briolink.locationservice.dto.StateDto
+import com.briolink.location.model.State
 import com.opencsv.bean.CsvBindByName
-import java.math.BigDecimal
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
@@ -56,15 +53,14 @@ class State {
     @CsvBindByName
     var longitude: Double? = null
 
-
-    fun toDto() : StateDto = StateDto(
-            id = id,
-            name = name,
-            countryId = country.id!!,
-            countryCode = countryCode,
-            stateCode = stateCode,
-            subtype = subtype,
-            latitude = latitude,
-            longitude = longitude
+    fun toModel() = State(
+        id = id!!,
+        name = name,
+        countryId = country.id!!,
+        countryCode = countryCode,
+        stateCode = stateCode,
+        subtype = subtype,
+        latitude = latitude,
+        longitude = longitude
     )
 }

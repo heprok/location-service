@@ -15,6 +15,17 @@ java.sourceCompatibility = Versions.JAVA
 
 repositories {
     mavenCentral()
+    mavenLocal()
+    maven {
+        url = uri("https://gitlab.com/api/v4/projects/33422039/packages/maven")
+        authentication {
+            create<HttpHeaderAuthentication>("header")
+        }
+        credentials(HttpHeaderCredentials::class) {
+            name = "Deploy-Token"
+            value = System.getenv("CI_DEPLOY_PASSWORD")
+        }
+    }
 }
 
 dependencies {
@@ -31,13 +42,18 @@ dependencies {
     // FasterXML
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    // SWAGGER
+    implementation("io.springfox:springfox-boot-starter:${Versions.SPRINGFOX}")
+
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    //CSV
-    implementation("com.opencsv:opencsv:${Versions.OPEN_CSV}")
+    // BRIOLINK LOCATION
+    implementation("com.briolink:location:${Versions.BRIOLINK_LOCATION}")
 
+    // CSV
+    implementation("com.opencsv:opencsv:${Versions.OPEN_CSV}")
 
     // Liquibase
     implementation("org.liquibase:liquibase-core:${Versions.LIQUIBASE_CORE}")

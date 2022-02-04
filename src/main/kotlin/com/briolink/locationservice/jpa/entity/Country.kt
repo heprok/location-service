@@ -1,12 +1,9 @@
 package com.briolink.locationservice.jpa.entity
 
-import com.briolink.locationservice.dto.CountryDto
+import com.briolink.location.model.Country
 import com.opencsv.bean.CsvBindByName
-import java.math.BigDecimal
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Lob
 import javax.persistence.Table
@@ -91,24 +88,24 @@ class Country {
     @CsvBindByName(column = "emojiU")
     var emojiU: String? = null
 
-    fun toDto() = CountryDto(
-            id = id,
-            name = name,
-            iso3 = iso3,
-            iso2 = iso2,
-            numericCode = numericCode,
-            phoneCode = phoneCode,
-            capital = capital,
-            currency = currency,
-            currencySymbol = currencySymbol,
-            tld = tld,
-            native = _native,
-            region = region,
-            subregion = subregion,
-            timezones = timezones,
-            latitude = latitude,
-            longitude = longitude,
-            emoji = emoji,
-            emojiU = emojiU,
+    fun toModel() = Country(
+        id = id!!,
+        name = name,
+        iso3 = iso3,
+        iso2 = iso2,
+        numericCode = numericCode,
+        phoneCode = phoneCode,
+        capital = capital,
+        currency = currency,
+        currencySymbol = currencySymbol,
+        tld = tld,
+        native = _native,
+        region = region,
+        subregion = subregion,
+        timezones = timezones,
+        latitude = latitude,
+        longitude = longitude,
+        emoji = emoji,
+        emojiU = emojiU,
     )
 }
