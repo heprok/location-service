@@ -54,7 +54,7 @@ class State {
     var longitude: Double? = null
 
     fun toModel() = State(
-        id = id,
+        id = id!!,
         name = name,
         countryId = country.id!!,
         countryCode = countryCode,

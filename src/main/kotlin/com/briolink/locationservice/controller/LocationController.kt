@@ -1,7 +1,7 @@
 package com.briolink.locationservice.controller
 
 import com.briolink.location.enumeration.TypeLocationEnum
-import com.briolink.location.model.LocationInfo
+import com.briolink.location.model.LocationFullInfo
 import com.briolink.location.model.LocationSuggestion
 import com.briolink.locationservice.service.LocationService
 import io.swagger.annotations.Api
@@ -38,7 +38,7 @@ class LocationController(
     fun getLocationInfo(
         @NotNull @PathVariable(value = "type", required = true) type: TypeLocationEnum,
         @NotNull @PathVariable(value = "id", required = true) id: Int
-    ): LocationInfo? {
+    ): LocationFullInfo? {
         return locationService.getLocationInfo(id = id, type = type)
     }
 }

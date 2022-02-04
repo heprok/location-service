@@ -1,7 +1,7 @@
 package com.briolink.locationservice.jpa.entity
 
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id

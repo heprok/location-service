@@ -1,8 +1,8 @@
 package com.briolink.locationservice.service
 
 import com.briolink.location.enumeration.TypeLocationEnum
+import com.briolink.location.model.LocationFullInfo
 import com.briolink.location.model.LocationId
-import com.briolink.location.model.LocationInfo
 import com.briolink.location.model.LocationSuggestion
 import com.briolink.locationservice.config.CsvFilesLocation
 import com.briolink.locationservice.jpa.entity.City
@@ -32,15 +32,15 @@ class LocationService(
     private val infoRepository: InfoRepository
 ) {
 
-    fun md5Check(): Boolean {
-//        val md5Country = BufferedInputStream(csvFilesLocation.country.openStream()).let { DigestUtils.md5Digest(it) }
-//        val md5State = BufferedInputStream(csvFilesLocation.state.openStream()).let { DigestUtils.md5Digest(it) }
-        val md5City =
-            BufferedInputStream(csvFilesLocation.city.openStream()).let { UUID.nameUUIDFromBytes(it.readAllBytes()) }
-        return infoRepository.findByIdOrNull(md5City) == null
-    }
+//    fun md5Check(): Boolean {
+// //        val md5Country = BufferedInputStream(csvFilesLocation.country.openStream()).let { DigestUtils.md5Digest(it) }
+// //        val md5State = BufferedInputStream(csvFilesLocation.state.openStream()).let { DigestUtils.md5Digest(it) }
+//        val md5City =
+//            BufferedInputStream(csvFilesLocation.city.openStream()).let { UUID.nameUUIDFromBytes(it.readAllBytes()) }
+//        return infoRepository.findByIdOrNull(md5City) == null
+//    }
 
-    fun refresh() {
+    fun refreshDatabase() {
         println("refresh database")
         val mapCountry: MutableMap<Int, Country> = mutableMapOf()
         val mapState: MutableMap<Int, State> = mutableMapOf()
@@ -87,7 +87,6 @@ class LocationService(
 
     fun getListLocationSuggestion(query: String?): List<LocationSuggestion> =
         locationRepository.findByQueryAndType(query).let {
-            println(query)
             val firstType = it.firstOrNull()?.type
             it.filter { location -> location.type == firstType }
         }.map {
@@ -99,35 +98,32 @@ class LocationService(
             LocationSuggestion(locationId = locationId, name = name)
         }
 
-    fun getLocationInfo(id: Int, type: TypeLocationEnum): LocationInfo? {
+    fun getLocationInfo(id: Int, type: TypeLocationEnum): LocationFullInfo? {
         return when (type) {
             TypeLocationEnum.City -> {
                 cityRepository.findByIdOrNull(id)?.let {
-                    LocationInfo(
+                    LocationFullInfo(
                         city = it.toModel(),
                         state = it.state.toModel(),
-                        country = it.country.toModel(),
-                        location = it.name + ", " + it.state.name + ", " + it.country.name,
+                        country = it.country.toModel()
                     )
                 }
             }
             TypeLocationEnum.State -> {
                 stateRepository.findByIdOrNull(id)?.let {
-                    LocationInfo(
+                    LocationFullInfo(
                         city = null,
                         state = it.toModel(),
-                        country = it.country.toModel(),
-                        location = it.name + ", " + it.country.name,
+                        country = it.country.toModel()
                     )
                 }
             }
             TypeLocationEnum.Country -> {
                 countryRepository.findByIdOrNull(id)?.let {
-                    LocationInfo(
+                    LocationFullInfo(
                         city = null,
                         state = null,
-                        country = it.toModel(),
-                        location = it.name,
+                        country = it.toModel()
                     )
                 }
             }

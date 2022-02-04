@@ -58,7 +58,7 @@ class City {
     var wikiDataId: String? = null
 
     fun toModel() = City(
-        id = id,
+        id = id!!,
         name = name,
         countryCode = countryCode,
         countryId = country.id!!,

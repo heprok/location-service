@@ -89,7 +89,7 @@ class Country {
     var emojiU: String? = null
 
     fun toModel() = Country(
-        id = id,
+        id = id!!,
         name = name,
         iso3 = iso3,
         iso2 = iso2,
