@@ -3,6 +3,9 @@ server:
 spring:
   profiles:
     active: ${env.spring_profiles_active:local}
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   servlet:
     multipart:
       max-file-size: 2MB

@@ -1,21 +1,89 @@
+import org.gradle.internal.impldep.org.eclipse.jgit.util.RawCharUtil.trimTrailingWhitespace
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames.target
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
     id("org.springframework.boot") version Versions.SPRING_BOOT
+    id("com.diffplug.spotless") version Versions.SPOTLESS
     id("io.spring.dependency-management") version Versions.SPRING_DEPENDENCY_MANAGEMENT
     kotlin("jvm") version Versions.KOTLIN
     kotlin("kapt") version Versions.KOTLIN
     kotlin("plugin.spring") version Versions.KOTLIN
 }
 
+apply {
+    plugin("com.diffplug.spotless")
+}
+
+repositories {
+    mavenCentral()
+}
+
 group = "com.briolink"
-version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = Versions.JAVA
+version = "1.2-SNAPSHOT"
+
+tasks.withType<JavaCompile> {
+    sourceCompatibility = Versions.JAVA
+    targetCompatibility = Versions.JAVA
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = Versions.JAVA
+    }
+}
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+
+        // https://github.com/diffplug/spotless/issues/142
+        ktlint().userData(
+            mapOf(
+                "indent_style" to "space",
+                "max_line_length" to "140",
+                "indent_size" to "4",
+                "ij_kotlin_code_style_defaults" to "KOTLIN_OFFICIAL",
+                "ij_kotlin_line_comment_at_first_column" to "false",
+                "ij_kotlin_line_comment_add_space" to "true",
+                "ij_kotlin_name_count_to_use_star_import" to "2147483647",
+                "ij_kotlin_name_count_to_use_star_import_for_members" to "2147483647",
+                "ij_kotlin_keep_blank_lines_in_declarations" to "1",
+                "ij_kotlin_keep_blank_lines_in_code" to "1",
+                "ij_kotlin_keep_blank_lines_before_right_brace" to "0",
+                "ij_kotlin_align_multiline_parameters" to "false",
+                "ij_continuation_indent_size" to "4",
+                "insert_final_newline" to "true",
+            )
+        )
+
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
+
+    kotlinGradle {
+        target("**/*.gradle.kts", "*.gradle.kts")
+
+        ktlint().userData(mapOf("indent_size" to "4", "continuation_indent_size" to "4"))
+
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
+}
+
+tasks.withType<KotlinCompile> {
+    dependsOn("spotlessApply")
+    dependsOn("spotlessCheck")
+}
 
 repositories {
     mavenCentral()
     mavenLocal()
+    // Location lib
     maven {
         url = uri("https://gitlab.com/api/v4/projects/33422039/packages/maven")
         authentication {
@@ -62,16 +130,13 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:${Versions.KOTLIN_LOGGING_JVM}")
 
     // postgtrsql JDBC Driver
-    runtimeOnly("org.postgresql:postgresql:${Versions.POSTGRESQL}")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = Versions.JVM
-    }
+    runtimeOnly("org.postgresql:postgresql")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.compileJava {
+    dependsOn(tasks.processResources)
 }
