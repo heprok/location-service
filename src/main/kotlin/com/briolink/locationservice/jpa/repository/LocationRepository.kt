@@ -27,9 +27,9 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                 to_tsvector('english', concat(countries.name, ' ', countries.iso2, ' ', countries.iso3)) as textsearch_tsv
             FROM
                 countries
-            
+
             UNION ALL
-            
+
             SELECT
                 states.id AS id,
                     states.type as type,
@@ -43,9 +43,9 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
             FROM
                 states
             LEFT JOIN countries ON countries.id = states.country_id
-            
+
             UNION ALL
-            
+
             SELECT
                 cities.id AS id,
                     cities.type as type,

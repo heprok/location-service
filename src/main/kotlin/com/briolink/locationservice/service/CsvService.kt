@@ -4,11 +4,9 @@ import com.opencsv.bean.CsvToBean
 import com.opencsv.bean.CsvToBeanBuilder
 import com.opencsv.bean.HeaderColumnNameMappingStrategy
 import org.springframework.stereotype.Service
-import org.springframework.util.DigestUtils
 import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedInputStream
 import java.io.InputStream
-import java.net.URL
 import javax.persistence.EntityManager
 
 @Service
@@ -26,9 +24,9 @@ class CsvService(
         strategy.type = E::class.java
 
         val csvToBean: CsvToBean<E> = CsvToBeanBuilder<E>(file.bufferedReader())
-                .withMappingStrategy(strategy)
-                .withIgnoreLeadingWhiteSpace(true)
-                .build()
+            .withMappingStrategy(strategy)
+            .withIgnoreLeadingWhiteSpace(true)
+            .build()
 
         return csvToBean.parse()
     }

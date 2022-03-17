@@ -11,7 +11,7 @@ class LocationServiceApplication(
     locationService: LocationService
 ) {
     init {
-        locationService.refreshDatabase()
+        // locationService.refreshDatabase()
     }
 }
 
