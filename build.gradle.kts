@@ -1,7 +1,4 @@
-import org.gradle.internal.impldep.org.eclipse.jgit.util.RawCharUtil.trimTrailingWhitespace
-import org.jetbrains.kotlin.builtins.StandardNames.FqNames.target
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 
 plugins {
     id("org.springframework.boot") version Versions.SPRING_BOOT
@@ -82,7 +79,7 @@ tasks.withType<KotlinCompile> {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+    // mavenLocal()
     // Location lib
     maven {
         url = uri("https://gitlab.com/api/v4/projects/33422039/packages/maven")
@@ -118,7 +115,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // BRIOLINK LOCATION
-    implementation("com.briolink:location:${Versions.BRIOLINK_LOCATION}")
+    implementation("com.briolink.lib:location:${Versions.BRIOLINK_LOCATION}")
 
     // CSV
     implementation("com.opencsv:opencsv:${Versions.OPEN_CSV}")

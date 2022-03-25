@@ -1,6 +1,6 @@
 package com.briolink.locationservice.jpa.entity
 
-import com.briolink.location.model.State
+import com.briolink.lib.location.model.State
 import com.opencsv.bean.CsvBindByName
 import javax.persistence.Column
 import javax.persistence.Entity

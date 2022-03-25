@@ -1,9 +1,9 @@
 package com.briolink.locationservice.service
 
-import com.briolink.location.enumeration.TypeLocationEnum
-import com.briolink.location.model.LocationFullInfo
-import com.briolink.location.model.LocationId
-import com.briolink.location.model.LocationSuggestion
+import com.briolink.lib.location.enumeration.TypeLocationEnum
+import com.briolink.lib.location.model.LocationFullInfo
+import com.briolink.lib.location.model.LocationId
+import com.briolink.lib.location.model.LocationSuggestion
 import com.briolink.locationservice.config.CsvFilesLocation
 import com.briolink.locationservice.jpa.entity.City
 import com.briolink.locationservice.jpa.entity.Country
