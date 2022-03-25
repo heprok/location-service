@@ -1,8 +1,8 @@
 package com.briolink.locationservice.controller
 
-import com.briolink.location.enumeration.TypeLocationEnum
-import com.briolink.location.model.LocationFullInfo
-import com.briolink.location.model.LocationSuggestion
+import com.briolink.lib.location.enumeration.TypeLocationEnum
+import com.briolink.lib.location.model.LocationFullInfo
+import com.briolink.lib.location.model.LocationSuggestion
 import com.briolink.locationservice.service.LocationService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
