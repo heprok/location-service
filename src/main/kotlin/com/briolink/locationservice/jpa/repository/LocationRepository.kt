@@ -81,11 +81,11 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                     state_name as stateName,
                     country_name as countryName,
                     type,
-                    ts_rank(textsearch_tsv, to_tsquery('english', query)) AS rank
+                    ts_rank(textsearch_tsv, to_tsquery('simple', query)) AS rank
                 FROM
                     location, myconstants
                 WHERE
-                    :query is null or (textsearch_tsv @@ to_tsquery('english', query))
+                    :query is null or (textsearch_tsv @@ to_tsquery('simple', query))
                 ORDER BY type = 'Country' desc, type = 'State' desc, type = 'City' desc, rank desc
                 LIMIT 5
             """,
