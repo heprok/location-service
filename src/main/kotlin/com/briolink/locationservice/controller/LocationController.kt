@@ -3,6 +3,8 @@ package com.briolink.locationservice.controller
 import com.briolink.lib.location.enumeration.TypeLocationEnum
 import com.briolink.lib.location.model.LocationFullInfo
 import com.briolink.lib.location.model.LocationSuggestion
+import com.briolink.locationservice.dto.AutocompleteDto
+import com.briolink.locationservice.dto.LocationInfoDto
 import com.briolink.locationservice.service.LocationService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.NotNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -40,5 +43,31 @@ class LocationController(
         @NotNull @PathVariable(value = "id", required = true) id: Int
     ): LocationFullInfo? {
         return locationService.getLocationInfo(id = id, type = type)
+    }
+}
+
+@RestController
+@Deprecated("Use LocationController")
+class LocationControllerDeprecated(
+    private val locationService: LocationService,
+) {
+    @GetMapping("/locations")
+    fun locations(@RequestParam(value = "query", required = true) query: String): List<AutocompleteDto> {
+        return locationService.getListLocationSuggestion(query).map { AutocompleteDto(it.locationId.toString(), it.name) }
+    }
+
+    @GetMapping("/location")
+    fun location(
+        @RequestParam(value = "type", required = true) type: TypeLocationEnum,
+        @RequestParam(value = "id", required = true) id: Int
+    ): LocationInfoDto? {
+        return locationService.getLocationInfo(id = id, type = type)?.let {
+            LocationInfoDto(
+                country = it.country,
+                state = it.state,
+                city = it.city,
+                location = it.toString()
+            )
+        }
     }
 }
