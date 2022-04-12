@@ -44,6 +44,16 @@ class LocationController(
     ): LocationFullInfo? {
         return locationService.getLocationInfo(id = id, type = type)
     }
+
+    @GetMapping("/search")
+    @ApiOperation("Search location by city/state/country names")
+    fun search(
+        @NotNull @RequestParam(value = "city", required = false) city: String?,
+        @NotNull @RequestParam(value = "state", required = false) state: String?,
+        @NotNull @RequestParam(value = "country", required = false) country: String?,
+    ): LocationFullInfo? {
+        return locationService.search(cityName = city, stateName = state, countryName = country)
+    }
 }
 
 @RestController
