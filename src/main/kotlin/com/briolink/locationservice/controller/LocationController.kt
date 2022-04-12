@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -40,5 +41,15 @@ class LocationController(
         @NotNull @PathVariable(value = "id", required = true) id: Int
     ): LocationFullInfo? {
         return locationService.getLocationInfo(id = id, type = type)
+    }
+
+    @GetMapping("/search")
+    @ApiOperation("Search location by city/state/country names")
+    fun search(
+        @NotNull @RequestParam(value = "city", required = false) city: String?,
+        @NotNull @RequestParam(value = "state", required = false) state: String?,
+        @NotNull @RequestParam(value = "country", required = false) country: String?,
+    ): LocationFullInfo? {
+        return locationService.search(cityName = city, stateName = state, countryName = country)
     }
 }

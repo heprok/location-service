@@ -8,6 +8,7 @@ import com.briolink.locationservice.config.CsvFilesLocation
 import com.briolink.locationservice.jpa.entity.City
 import com.briolink.locationservice.jpa.entity.Country
 import com.briolink.locationservice.jpa.entity.Info
+import com.briolink.locationservice.jpa.entity.Location
 import com.briolink.locationservice.jpa.entity.State
 import com.briolink.locationservice.jpa.repository.CityRepository
 import com.briolink.locationservice.jpa.repository.CountryRepository
@@ -128,5 +129,28 @@ class LocationService(
                 }
             }
         }
+    }
+
+    fun search(cityName: String?, stateName: String?, countryName: String?): LocationFullInfo? {
+        var location: List<Location> = emptyList()
+
+        if (!cityName.isNullOrBlank() && !stateName.isNullOrBlank() && !countryName.isNullOrBlank()) {
+            location = locationRepository.search(cityName, stateName, countryName, "City")
+        }
+        if (!cityName.isNullOrBlank() && !countryName.isNullOrBlank() && location.isEmpty()) {
+            location = locationRepository.search(cityName, "", countryName, "City")
+            if (location.isEmpty()) {
+                location = locationRepository.search("", cityName, countryName, "State")
+            }
+        }
+        if (!stateName.isNullOrBlank() && !countryName.isNullOrBlank() && location.isEmpty()) {
+            location = locationRepository.search("", stateName, countryName, "State")
+        }
+        if (!countryName.isNullOrBlank() && location.isEmpty()) {
+            location = locationRepository.search("", "", countryName, "Country")
+        }
+
+        return if (location.isNotEmpty()) getLocationInfo(location[0].id!!.id!!.toInt(), TypeLocationEnum.valueOf(location[0].id!!.type!!))
+        else null
     }
 }

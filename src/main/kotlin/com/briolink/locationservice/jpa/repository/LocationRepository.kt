@@ -24,7 +24,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                 countries.name as country_name,
                     countries.iso2 as country_code_iso2,
                     countries.iso3 as country_code_iso3,
-                to_tsvector('english', concat(countries.name, ' ', countries.iso2, ' ', countries.iso3)) as textsearch_tsv
+                to_tsvector('simple', concat(countries.name, ' ', countries.iso2, ' ', countries.iso3)) as textsearch_tsv
             FROM
                 countries
 
@@ -39,7 +39,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                 countries.name as country_name,
                     countries.iso2 as country_code_iso2,
                     countries.iso3 as country_code_iso3,
-                to_tsvector('english', concat(states.name, ' ', countries.name, ' ', countries.iso2, ' ', countries.iso3)) as textsearch_tsv
+                to_tsvector('simple', concat(states.name, ' ', countries.name, ' ', countries.iso2, ' ', countries.iso3)) as textsearch_tsv
             FROM
                 states
             LEFT JOIN countries ON countries.id = states.country_id
@@ -55,7 +55,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                     countries.name as country_name,
                     countries.iso2 as country_code_iso2,
                     countries.iso3 as country_code_iso3,
-                to_tsvector('english', concat(cities.name, ' ', states.name, ' ', countries.name, ' ', countries.iso2, ' ', countries.iso3)) as textsearch_tsv
+                to_tsvector('simple', concat(cities.name, ' ', states.name, ' ', countries.name, ' ', countries.iso2, ' ', countries.iso3)) as textsearch_tsv
             FROM
                 cities
             LEFT JOIN states ON states.id = cities.state_id
@@ -92,4 +92,21 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
         nativeQuery = true,
     )
     fun findByQueryAndType(@Param("query") query: String?): List<LocationInfo>
+
+    @Query(
+        """
+                SELECT e FROM Location e
+                WHERE
+                    (:city = '' or e.cityName LIKE CONCAT(:city, '%')) AND
+                    (:state = '' or e.stateName LIKE CONCAT(:state, '%')) AND
+                    (:country = '' or e.countryName LIKE CONCAT(:country, '%')) AND
+                    e.id.type = :type
+            """,
+    )
+    fun search(
+        @Param("city") city: String,
+        @Param("state") state: String,
+        @Param("country") country: String,
+        @Param("type") type: String
+    ): List<Location>
 }
