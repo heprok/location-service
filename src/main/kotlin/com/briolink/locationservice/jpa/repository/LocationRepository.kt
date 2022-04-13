@@ -99,7 +99,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                 WHERE
                     (:city = '' or e.cityName LIKE CONCAT(:city, '%')) AND
                     (:state = '' or e.stateName LIKE CONCAT(:state, '%')) AND
-                    (:country = '' or e.countryName LIKE CONCAT(:country, '%')) AND
+                    (:country = '' or e.countryName LIKE CONCAT('%', :country, '%')) AND
                     e.id.type = :type
             """,
     )
