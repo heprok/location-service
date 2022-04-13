@@ -23,12 +23,11 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-#        metadata_builder_contributor: com.briolink.locationservice.jpa.Functions
     generate-ddl: false
     show-sql: false
     open-in-view: false
   liquibase:
-    change-log: migration/db.changelog.yml
+    change-log: db/changelog.xml
 app:
   csv-files-location:
     country: https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/csv/countries.csv

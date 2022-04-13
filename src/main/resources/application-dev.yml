@@ -3,4 +3,4 @@ server:
     include-stacktrace: always
 spring:
   jpa:
-    show-sql: false
+    show-sql: true

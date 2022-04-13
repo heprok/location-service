@@ -15,11 +15,12 @@ import com.briolink.locationservice.jpa.repository.CountryRepository
 import com.briolink.locationservice.jpa.repository.InfoRepository
 import com.briolink.locationservice.jpa.repository.LocationRepository
 import com.briolink.locationservice.jpa.repository.StateRepository
+import com.briolink.locationservice.utils.HashUtils
+import mu.KLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.io.BufferedInputStream
-import java.util.UUID
+import java.io.ByteArrayInputStream
 
 @Service
 @Transactional
@@ -32,58 +33,62 @@ class LocationService(
     private val csvFilesLocation: CsvFilesLocation,
     private val infoRepository: InfoRepository
 ) {
-
-//    fun md5Check(): Boolean {
-// //        val md5Country = BufferedInputStream(csvFilesLocation.country.openStream()).let { DigestUtils.md5Digest(it) }
-// //        val md5State = BufferedInputStream(csvFilesLocation.state.openStream()).let { DigestUtils.md5Digest(it) }
-//        val md5City =
-//            BufferedInputStream(csvFilesLocation.city.openStream()).let { UUID.nameUUIDFromBytes(it.readAllBytes()) }
-//        return infoRepository.findByIdOrNull(md5City) == null
-//    }
+    companion object : KLogging()
 
     fun refreshDatabase() {
-        println("refresh database")
+        logger.info { "Refreshing location database" }
+
         val mapCountry: MutableMap<Int, Country> = mutableMapOf()
         val mapState: MutableMap<Int, State> = mutableMapOf()
-        val streamBufferCountry = BufferedInputStream(csvFilesLocation.country.openStream())
-        val streamBufferState = BufferedInputStream(csvFilesLocation.state.openStream())
-        val streamBufferCity = BufferedInputStream(csvFilesLocation.city.openStream())
-        println("Download country...")
+
+        val bytesCountry = csvFilesLocation.country.openStream().readAllBytes()
+        val bytesState = csvFilesLocation.state.openStream().readAllBytes()
+        val bytesCity = csvFilesLocation.city.openStream().readAllBytes()
+
+        val hashSum = HashUtils.md5(
+            bytesCountry + bytesState + bytesCity
+        )
+        logger.info { "Hash sum: $hashSum" }
+
+        val info = infoRepository.findByIdOrNull(1) ?: Info()
+        if (info.hash == hashSum) {
+            logger.info { "Location database is up to date" }
+            return
+        }
+
+        val streamBufferCountry = ByteArrayInputStream(bytesCountry)
+        val streamBufferState = ByteArrayInputStream(bytesState)
+        val streamBufferCity = ByteArrayInputStream(bytesCity)
+
+        logger.info { "Loading countries" }
         csvService.upload<Country>(streamBufferCountry)?.forEach {
             mapCountry[it.id!!] = countryRepository.save(it)
         }
-        println("Download state...")
+
+        logger.info { "Loading states" }
         csvService.upload<State>(streamBufferState)?.forEach {
             it.country = mapCountry[it.countryIdImpl]!!
             mapState[it.id!!] = stateRepository.save(it)
         }
-        println("Download city...")
 
+        logger.info { "Loading cities" }
         csvService.upload<City>(streamBufferCity)?.forEach {
             it.country = mapCountry[it.countryIdImpl]!!
             it.state = mapState[it.stateIdImpl]!!
             cityRepository.save(it)
         }
-        val md5Country = UUID.nameUUIDFromBytes(streamBufferCountry.readAllBytes())
-        println("md5Country")
-        println(md5Country.toString())
-        val md5State = UUID.nameUUIDFromBytes(streamBufferState.readAllBytes())
-        println("md5State")
-        println(md5State.toString())
-        val md5City = UUID.nameUUIDFromBytes(streamBufferCity.readAllBytes())
-        println("md5City")
-        println(md5City.toString())
+
         streamBufferCountry.close()
         streamBufferState.close()
         streamBufferCity.close()
-        Info().apply {
-            this.id = md5City
-            this.md5State = md5State
-            this.md5Country = md5Country
-            infoRepository.save(this)
-        }
+
+        info.hash = hashSum
+        infoRepository.save(info)
+
         locationRepository.deleteLocations()
         locationRepository.insertLocation()
+
+        logger.info { "Location database has been refreshed" }
     }
 
     fun getListLocationSuggestion(query: String?): List<LocationSuggestion> =

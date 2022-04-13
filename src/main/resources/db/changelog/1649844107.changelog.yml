@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1649844107
+      author: maxim@briolink.com
+      changes:
+        - dropTable:
+            tableName: info
+        - createTable:
+            tableName: info
+            columns:
+              - column:
+                  - name: id
+                    type: int2
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+              - column:
+                  name: hash
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
