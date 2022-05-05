@@ -91,8 +91,8 @@ class LocationService(
         logger.info { "Location database has been refreshed" }
     }
 
-    fun getListLocationSuggestion(query: String?): List<LocationSuggestion> =
-        locationRepository.findByQueryAndType(query).let {
+    fun getListLocationSuggestion(query: String?, limit: Int? = null, offset: Int? = null): List<LocationSuggestion> =
+        locationRepository.findByQueryAndType(query, limit ?: 10, offset ?: 0).let {
             val firstType = it.firstOrNull()?.type
             it.filter { location -> location.type == firstType }
         }.map {

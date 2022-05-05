@@ -32,8 +32,10 @@ class LocationController(
     @ApiOperation("Get list suggestion by query")
     fun getLocationSuggestions(
         @ApiParam(value = "query", required = false) query: String? = null,
+        @ApiParam(value = "limit", required = false) limit: Int? = null,
+        @ApiParam(value = "offset", required = false) offset: Int? = null,
     ): List<LocationSuggestion> {
-        return locationService.getListLocationSuggestion(query?.ifBlank { null })
+        return locationService.getListLocationSuggestion(query?.ifBlank { null }, limit, offset)
     }
 
     @GetMapping("/info/{type}/{id}")

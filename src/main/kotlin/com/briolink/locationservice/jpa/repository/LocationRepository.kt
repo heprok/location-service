@@ -87,11 +87,15 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                 WHERE
                     :query is null or (textsearch_tsv @@ to_tsquery('simple', query))
                 ORDER BY type = 'Country' desc, type = 'State' desc, type = 'City' desc, rank desc
-                LIMIT 5
+                LIMIT :limit OFFSET :offset
             """,
         nativeQuery = true,
     )
-    fun findByQueryAndType(@Param("query") query: String?): List<LocationInfo>
+    fun findByQueryAndType(
+        @Param("query") query: String?,
+        @Param("limit") limit: Int,
+        @Param("offset") offset: Int
+    ): List<LocationInfo>
 
     @Query(
         """
