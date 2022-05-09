@@ -92,10 +92,7 @@ class LocationService(
     }
 
     fun getListLocationSuggestion(query: String?, limit: Int? = null, offset: Int? = null): List<LocationSuggestion> =
-        locationRepository.findByQueryAndType(query, limit ?: 10, offset ?: 0).let {
-            val firstType = it.firstOrNull()?.type
-            it.filter { location -> location.type == firstType }
-        }.map {
+        locationRepository.findByQueryAndType(query, limit ?: 10, offset ?: 0).map {
             val locationId = LocationId(type = TypeLocationEnum.valueOf(it.type), id = it.id.toInt())
             val name =
                 if (it.cityName != null) "${it.cityName}, ${it.stateName}, ${it.countryName}"

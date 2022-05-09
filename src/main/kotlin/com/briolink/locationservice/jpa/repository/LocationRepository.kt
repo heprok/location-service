@@ -72,21 +72,22 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
 
     @Query(
         """
-                WITH myconstants (query) as (
-                   values (quote_literal(quote_literal(:query)) || ':*')
+                WITH consts (query) as (
+                   values (case when :query is null then null else to_tsquery('simple', (quote_literal(quote_literal(:query)) || ':*')) end)
                 )
                 SELECT
                     id,
                     city_name as cityName,
                     state_name as stateName,
                     country_name as countryName,
-                    type,
-                    ts_rank(textsearch_tsv, to_tsquery('simple', query)) AS rank
+                    type
                 FROM
-                    location, myconstants
+                    location, consts
                 WHERE
-                    :query is null or (textsearch_tsv @@ to_tsquery('simple', query))
-                ORDER BY type = 'Country' desc, type = 'State' desc, type = 'City' desc, rank desc
+                    consts.query is null or (textsearch_tsv @@ consts.query)
+                ORDER BY
+                    type = 'Country' desc, type = 'State' desc, type = 'City' desc,
+                    ts_rank(textsearch_tsv, consts.query) desc, country_name asc, state_name asc, city_name asc
                 LIMIT :limit OFFSET :offset
             """,
         nativeQuery = true,
