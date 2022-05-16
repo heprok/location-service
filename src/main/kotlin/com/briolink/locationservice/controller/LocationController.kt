@@ -34,8 +34,9 @@ class LocationController(
         @ApiParam(value = "query", required = false) query: String? = null,
         @ApiParam(value = "limit", required = false) limit: Int? = null,
         @ApiParam(value = "offset", required = false) offset: Int? = null,
+        @ApiParam(value = "type", required = false) type: TypeLocationEnum? = null,
     ): List<LocationSuggestion> {
-        return locationService.getListLocationSuggestion(query?.ifBlank { null }, limit, offset)
+        return locationService.getListLocationSuggestion(query?.ifBlank { null }, limit, offset, type)
     }
 
     @GetMapping("/info/{type}/{id}")

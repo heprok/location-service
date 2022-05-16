@@ -84,7 +84,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
                 FROM
                     location, consts
                 WHERE
-                    consts.query is null or (textsearch_tsv @@ consts.query)
+                    (consts.query is null or (textsearch_tsv @@ consts.query)) and (:type = '' or (type = :type))
                 ORDER BY
                     type = 'Country' desc, type = 'State' desc, type = 'City' desc,
                     ts_rank(textsearch_tsv, consts.query) desc, country_name asc, state_name asc, city_name asc
@@ -94,6 +94,7 @@ interface LocationRepository : JpaRepository<Location, LocationId> {
     )
     fun findByQueryAndType(
         @Param("query") query: String?,
+        @Param("type") type: String = "",
         @Param("limit") limit: Int,
         @Param("offset") offset: Int
     ): List<LocationInfo>

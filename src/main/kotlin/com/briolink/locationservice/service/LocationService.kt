@@ -91,8 +91,13 @@ class LocationService(
         logger.info { "Location database has been refreshed" }
     }
 
-    fun getListLocationSuggestion(query: String?, limit: Int? = null, offset: Int? = null): List<LocationSuggestion> =
-        locationRepository.findByQueryAndType(query, limit ?: 10, offset ?: 0).map {
+    fun getListLocationSuggestion(
+        query: String?,
+        limit: Int? = null,
+        offset: Int? = null,
+        type: TypeLocationEnum? = null
+    ): List<LocationSuggestion> =
+        locationRepository.findByQueryAndType(query, type?.name ?: "", limit ?: 10, offset ?: 0).map {
             val locationId = LocationId(type = TypeLocationEnum.valueOf(it.type), id = it.id.toInt())
             val name =
                 if (it.cityName != null) "${it.cityName}, ${it.stateName}, ${it.countryName}"
